@@ -1,9 +1,11 @@
 package main
 
 import (
-	// "os"
 	"context"
+	"fmt"
 	"log"
+	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -30,7 +32,7 @@ func main() {
 
 	// Get the first page of results for ListObjectsV2 for a bucket
 	output, err := client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
-		Bucket: aws.String("bmkazuya-s3-example"),
+		Bucket: aws.String(os.Getenv("AWS_S3_BUCKET")),
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -39,5 +41,27 @@ func main() {
 	log.Println("first page results:")
 	for _, object := range output.Contents {
 		log.Printf("key=%s size=%d", aws.ToString(object.Key), object.Size)
+
+		// presignClient := s3.NewPresignClient(client, func(s *s3.PresignOptions) {
+		// 	s.Expires = time.Until(time.Now().Add(1 * time.Minute))
+		// })
+		presignClient := s3.NewPresignClient(client)
+
+		responseExpires := time.Now().Add(30 * time.Second) // msec
+		request, err := presignClient.PresignGetObject(context.TODO(), &s3.GetObjectInput{
+			Bucket:          aws.String(os.Getenv("AWS_S3_BUCKET")),
+			Key:             aws.String(*object.Key),
+			ResponseExpires: &responseExpires,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%v\n", request.URL)
+		fmt.Printf("header : %+v\n", request.SignedHeader)
+
 	}
+}
+
+func getContent(method, url string) error {
+	return nil
 }
