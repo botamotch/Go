@@ -14,6 +14,7 @@ Go言語の練習
 $ go mod init xxx  # プロジェクトの初期化
 $ go get xxx       # プロジェクト内のモジュールのインストール（go.modを編集）
 $ go mod tidy      # ソースコードと比較してモジュールを整理する
+$ go mod download  # ???
 $ go run xxx.go    # プログラムの実行
 
 $ go install xxx   # ツールをグローバルでインストール
