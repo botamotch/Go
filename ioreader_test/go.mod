@@ -1,0 +1,3 @@
+module ioreader_test
+
+go 1.19
