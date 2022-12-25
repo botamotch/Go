@@ -4,7 +4,7 @@
 
 標準ライブラリの中で下記の通り定義されており、`Read([]byte) (int, error)`というシグネチャを持つあらゆる型が該当する。
 
-```
+```go
 type Reader interface {
 	Read(p []byte) (n int, err error)
 }
